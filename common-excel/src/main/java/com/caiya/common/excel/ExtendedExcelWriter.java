@@ -58,7 +58,7 @@ public final class ExtendedExcelWriter {
     private static void writeRichRows(ExtendedSheet extendedSheet) {
         // 获取迭代每块数据的迭代器
         Iterator<ExtendedBaseRow> rowIterator = extendedSheet.getRichRowDatas().iterator();
-        // 当写入数据块对象ExtendedRowWapper时，用以保存剩余待换行写入的数据集
+        // 当写入数据块对象ExtendedRowWrapper时，用以保存剩余待换行写入的数据集
         Iterator<ExtendedRow> remainRowIterator = null;
         // 行号
         int i = 0;
@@ -75,7 +75,7 @@ public final class ExtendedExcelWriter {
             }
 
             int j = 0;
-            if (lastJ > 0 && rowData.isNewLine()) {
+            if (lastJ > 0 ) {
                 if (rowData.isNewLine()) {
                     i++;
                 } else {

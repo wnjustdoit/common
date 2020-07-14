@@ -1,24 +1,31 @@
 package com.caiya.common.excel;
 
-import com.caiya.common.excel.core.*;
 import com.google.common.collect.Lists;
+import com.caiya.common.excel.core.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExcelTest {
+import static org.junit.Assert.fail;
 
-    private static final Logger logger = LoggerFactory.getLogger(ExcelTest.class);
+public class ExtendedExcelTest {
+
+    private static final Logger logger = LoggerFactory.getLogger(ExtendedExcelTest.class);
 
     @Test
-    public void testWritePlainExcel() throws IOException {
+    void testWritePlainExcel(@TempDir java.nio.file.Path tempDir) throws IOException {
         // 设置工作簿
         ExtendedWorkbook extendedWorkbook = new ExtendedWorkbook("测试导出excel");
 
@@ -59,15 +66,19 @@ public class ExcelTest {
         extendedWorkbook.addExtendedSheet(extendedSheet);
 
         // 自定义输出流
-        OutputStream outputStream = new FileOutputStream(new File("/Users/wangnan/workspace/tmppppp/" + extendedWorkbook.getFileName() + extendedWorkbook.getSuffix().getValue()));
+        OutputStream outputStream = new FileOutputStream(tempDir.resolve(extendedWorkbook.getFileName() + extendedWorkbook.getSuffix().getValue()).toFile());
         // 写入输出流
-        ExtendedExcelWriter.writerExcel(extendedWorkbook, outputStream);
+        try {
+            ExtendedExcelWriter.writerExcel(extendedWorkbook, outputStream);
+        } catch (Exception e) {
+            fail();
+        }
     }
 
     @Test
-    public void testWriteRichExcel() throws IOException {
+    void testWriteRichExcel(@TempDir java.nio.file.Path tempDir) throws IOException {
         // 设置工作簿
-        ExtendedWorkbook extendedWorkbook = new ExtendedWorkbook("测试导出excel");
+        ExtendedWorkbook extendedWorkbook = new ExtendedWorkbook("测试导出excel"/*, ExtendedWorkbook.Suffix.XLSX*/);
 
         // 设置表格
         ExtendedSheet extendedSheet = new ExtendedSheet(extendedWorkbook, "某某统计报表");
@@ -91,12 +102,15 @@ public class ExcelTest {
         cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
         Font font = extendedWorkbook.createFont();
         font.setFontName("黑体");
-        font.setFontHeightInPoints((short) 16);//设置字体大小
-        font.setBold(true);//粗体显示
+        // 设置字体大小
+        font.setFontHeightInPoints((short) 16);
+        // 粗体显示
+        font.setBold(true);
         cellStyle.setFont(font);
         cellStyle.setFillForegroundColor(IndexedColors.LIGHT_GREEN.getIndex());
         cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         first2CellRow.setExtendedCells(Lists.newArrayList(new ExtendedCell(new CellValue("第一格")), new ExtendedCell(new CellValue("第二格"), cellStyle)));
+        // 先设置前两行（特例：跨行了）
         richRowDatas.add(first2CellRow);
 
         CellStyle cellStyle2 = extendedWorkbook.createCellStyle();
@@ -104,18 +118,21 @@ public class ExcelTest {
         cellStyle2.setVerticalAlignment(VerticalAlignment.CENTER);
         cellStyle2.setFillForegroundColor(IndexedColors.LIGHT_ORANGE.getIndex());
         cellStyle2.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-        cellStyle.setWrapText(true);
+        cellStyle2.setWrapText(true);
+        // 这里只演示一个有规则的行列数据块
         List<ExtendedRow> extendedRows = Lists.newArrayList();
         for (int i = 0; i < 10; i++) {
             ExtendedBaseRow extendedBaseRow;
             if (i == 0) {
                 extendedBaseRow = new ExtendedSubRow();
-                extendedBaseRow.setNewLine(false);// 设置不换行
+                // 设置不换行，修改此处直接影响结果展示，演示demo便于理解执行机制
+//                extendedBaseRow.setNewLine(false);
             } else {
                 extendedBaseRow = new ExtendedRow();
             }
             if (i == 5) {
-                extendedBaseRow.setCellStyle(cellStyle2);// 当前行空白单元格的背景会着色，如果需要填充数据单元格，那么设置数据单元格的样式即可
+                // 当前行空白单元格的背景会着色，如果需要填充数据单元格，那么设置数据单元格的样式即可
+                extendedBaseRow.setCellStyle(cellStyle2);
             }
             List<ExtendedCell> extendedCells = new ArrayList<>();
             for (int j = 0; j < 20; j++) {
@@ -131,11 +148,12 @@ public class ExcelTest {
             } else if (extendedBaseRow.getClass().equals(ExtendedRow.class)) {
                 extendedRows.add((ExtendedRow) extendedBaseRow);
             } else if (extendedBaseRow.getClass().equals(ExtendedRowWapper.class)) {
-                // do nothing
+                // ignore
             } else {
-                // do nothing
+                // ignore
             }
         }
+        // 批量设置有规则的数据块
         if (!CollectionUtils.isEmpty(extendedRows)) {
             ExtendedRowWapper extendedRowWapper = new ExtendedRowWapper();
             extendedRowWapper.setExtendedRows(extendedRows);
@@ -147,15 +165,30 @@ public class ExcelTest {
         extendedWorkbook.addExtendedSheet(extendedSheet);
 
         // 自定义输出流
-        OutputStream outputStream = new FileOutputStream(new File("/Users/wangnan/workspace/tmppppp/" + extendedWorkbook.getFileName() + extendedWorkbook.getSuffix().getValue()));
+        OutputStream outputStream = new FileOutputStream(tempDir.resolve(extendedWorkbook.getFileName() + extendedWorkbook.getSuffix().getValue()).toFile());
         // 写入输出流
-        ExtendedExcelWriter.writerExcel(extendedWorkbook, outputStream);
+        try {
+            ExtendedExcelWriter.writerExcel(extendedWorkbook, outputStream);
+            logger.info("excel文件写入临时目录：{}", tempDir.toString());
+            testReadExcel(tempDir);
+        } catch (Exception e) {
+            fail();
+        }
     }
 
-    @Test
-    public void testReadExcel() throws IOException {
-        ExtendedWorkbook extendedWorkbook = ExtendedExcelReader.readExcel(new FileInputStream(new File("/Users/wangnan/workspace/tmppppp/测试导出excel.xls")));
-        logger.info(extendedWorkbook.getExtendedSheets().get(0).getRowDatas().toString());
+//    @Test
+//    @Disabled
+    void testReadExcel(@TempDir java.nio.file.Path tempDir) throws IOException {
+        ExtendedWorkbook extendedWorkbook = ExtendedExcelReader.readExcel(new FileInputStream(tempDir.resolve("测试导出excel.xls").toFile()));
+        try {
+            logger.info(extendedWorkbook.getExtendedSheets().get(0).getRowDatas().toString());
+        } catch (Exception e) {
+            fail();
+        }
+        // 你可能经常转换成自定义的bean对象，即 List<List<String>> 先转换为 List<Map<String, Object>> 再转换为 List<Bean>。
+        // 推荐用fastjson处理泛型的方法：List<VO> list = JSON.parseObject("...", new TypeReference<List<VO>>() {});
+        // 或者单个对象解析更简单：VO vo = JSON.parseObject("...", VO.class);
+        // 同时可能用到的方法：String text = JSON.toJSONString(object);
     }
 
 }

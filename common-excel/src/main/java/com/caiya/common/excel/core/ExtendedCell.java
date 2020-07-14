@@ -41,6 +41,8 @@ public class ExtendedCell {
 
     /**
      * 原生单元格，一对一
+     *
+     * @deprecated 暂无使用
      */
     @Deprecated
     private Cell cell;
@@ -62,6 +64,9 @@ public class ExtendedCell {
         this.setHeight(height);
     }
 
+    /**
+     * @deprecated 暂无使用
+     */
     @Deprecated
     public ExtendedCell(Cell cell) {
         this.cell = cell;

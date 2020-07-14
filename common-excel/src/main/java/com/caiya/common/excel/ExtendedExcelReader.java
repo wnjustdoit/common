@@ -1,9 +1,9 @@
 package com.caiya.common.excel;
 
-import com.google.common.collect.Lists;
 import com.caiya.common.excel.core.ExtendedBaseRow;
 import com.caiya.common.excel.core.ExtendedSheet;
 import com.caiya.common.excel.core.ExtendedWorkbook;
+import com.google.common.collect.Lists;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -41,11 +41,13 @@ public final class ExtendedExcelReader {
         return result;
     }
 
+    /**
+     * @deprecated 暂时无此需求
+     */
+    @Deprecated
+    @SuppressWarnings("unused")
     private static List<ExtendedBaseRow> readRichSheet(Sheet sheet) {
-        List<ExtendedBaseRow> result = Lists.newArrayList();
-        // TODO
-
-        return result;
+        return Lists.newArrayList();
     }
 
     public static ExtendedWorkbook readExcel(InputStream inputStream) throws IOException {

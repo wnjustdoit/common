@@ -24,13 +24,27 @@
         <fastjson.version>1.2.59</fastjson.version>
         <lombok.version>1.18.2</lombok.version>
         <logback.version>1.2.3</logback.version>
+        <junit-jupiter.version>5.4.2</junit-jupiter.version>
+        <commons-collections4.version>4.1</commons-collections4.version>
+        <javax-servlet.version>3.0.1</javax-servlet.version>
     </properties>
 
     <dependencies>
         <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>${javax-servlet.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.apache.poi</groupId>
-            <artifactId>poi</artifactId>
+            <artifactId>poi-ooxml</artifactId>
             <version>${poi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>${commons-collections4.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -58,20 +72,13 @@
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>${junit-jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
-
-    <distributionManagement>
-        <repository>
-            <id>releases</id>
-            <name>local release repository</name>
-            <url>http://your_nexus_domain/repository/maven-releases/</url>
-        </repository>
-        <snapshotRepository>
-            <id>snapshots</id>
-            <name>local snapshot repository</name>
-            <url>http://your_nexus_domain/repository/maven-snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
 
     <build>
         <plugins>
