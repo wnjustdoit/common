@@ -26,7 +26,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>common-utils</artifactId>
-            <version>${project.version}</version>
+            <version>1.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -40,19 +40,6 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <distributionManagement>
-        <repository>
-            <id>releases</id>
-            <name>local release repository</name>
-            <url>http://your_nexus_domain/repository/maven-releases/</url>
-        </repository>
-        <snapshotRepository>
-            <id>snapshots</id>
-            <name>local snapshot repository</name>
-            <url>http://your_nexus_domain/repository/maven-snapshots/</url>
-        </snapshotRepository>
-    </distributionManagement>
 
     <build>
         <plugins>

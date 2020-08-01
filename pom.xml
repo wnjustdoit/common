@@ -11,6 +11,7 @@
         <module>common-utils</module>
         <module>common-excel</module>
         <module>common-all</module>
+        <module>common-db</module>
     </modules>
     <packaging>pom</packaging>
 
